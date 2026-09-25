@@ -1,16 +1,22 @@
-const CACHE_NAME = 'invoicepro-cache-v1';
+const CACHE_NAME = 'invoicepro-cache-v2';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.svg',
-  '/icon-512.svg'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.svg',
+  './icon-512.svg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      for (const asset of STATIC_ASSETS) {
+        try {
+          await cache.add(asset);
+        } catch (err) {
+          // Gracefully continue if an asset isn't available
+        }
+      }
     })
   );
   self.skipWaiting();
@@ -32,17 +38,16 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignore non-http/https or chrome-extension schemes, and firestore streaming requests
   const url = new URL(event.request.url);
   if (!url.protocol.startsWith('http')) return;
   if (url.hostname.includes('firestore.googleapis.com') || url.hostname.includes('identitytoolkit')) {
     return; // Let Firebase SDK handle offline persistence
   }
 
-  // Network-first with cache fallback for HTML navigation
+  // Network-first with cache fallback for navigation
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('/index.html'))
+      fetch(event.request).catch(() => caches.match('./index.html').then(res => res || caches.match('/index.html')))
     );
     return;
   }
@@ -65,7 +70,6 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Handle local notifications
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
@@ -76,7 +80,7 @@ self.addEventListener('notificationclick', (event) => {
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow('/');
+        return clients.openWindow('./');
       }
     })
   );

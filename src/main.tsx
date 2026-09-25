@@ -1,22 +1,26 @@
-import {StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import './index.css';
 
-// Register PWA service worker
-if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
+// Register PWA service worker safely for both local dev and production builds (e.g. GitHub Pages)
+if ('serviceWorker' in navigator && typeof window !== 'undefined') {
+  const swUrl = './sw.js';
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.warn('Service worker registration failed:', err);
+    navigator.serviceWorker.register(swUrl).catch((err) => {
+      console.warn('Service worker registration status:', err);
     });
   });
-} else if ('serviceWorker' in navigator) {
-  // In development, also attempt registration for testing offline features
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  createRoot(rootElement).render(
+    <StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </StrictMode>,
+  );
+}
