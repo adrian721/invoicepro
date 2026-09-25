@@ -6,6 +6,7 @@ import {
   collection, 
   doc, 
   setDoc, 
+  getDoc,
   getDocs, 
   deleteDoc, 
   onSnapshot,
@@ -404,9 +405,49 @@ export async function deleteInvoiceFromCloud(invoiceId: string): Promise<void> {
 export async function syncCompanyProfile(profile: CompanyProfile): Promise<void> {
   try {
     const docRef = doc(db, WORKSPACES_COLLECTION, DEFAULT_WORKSPACE_ID);
-    await setDoc(docRef, profile, { merge: true });
+    await setDoc(docRef, { ...profile, updatedAt: new Date().toISOString() }, { merge: true });
+    saveLocalProfile(profile);
   } catch (err) {
     console.warn('Failed to sync profile to cloud:', err);
+    throw err;
+  }
+}
+
+export async function getCloudCompanyProfile(): Promise<CompanyProfile | null> {
+  try {
+    const docRef = doc(db, WORKSPACES_COLLECTION, DEFAULT_WORKSPACE_ID);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      return snap.data() as CompanyProfile;
+    }
+  } catch (err) {
+    console.warn('Failed to fetch company profile from cloud:', err);
+  }
+  return null;
+}
+
+export function subscribeToCompanyProfile(
+  onData: (profile: CompanyProfile) => void,
+  onError?: (err: Error) => void
+) {
+  try {
+    const docRef = doc(db, WORKSPACES_COLLECTION, DEFAULT_WORKSPACE_ID);
+    return onSnapshot(
+      docRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const cloudProfile = snapshot.data() as CompanyProfile;
+          onData(cloudProfile);
+        }
+      },
+      (error) => {
+        console.warn('Profile subscription error:', error);
+        if (onError) onError(error);
+      }
+    );
+  } catch (err) {
+    console.warn('Could not set up profile snapshot listener:', err);
+    return () => {};
   }
 }
 

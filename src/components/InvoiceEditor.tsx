@@ -1449,7 +1449,7 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
             </div>
 
             {/* Container for the paper invoice */}
-            <div className="overflow-x-auto bg-slate-100/70 p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-inner">
+            <div className="overflow-x-auto bg-slate-100/70 p-3 sm:p-6 rounded-2xl border border-slate-200/80 shadow-inner flex justify-start lg:justify-center">
               <InvoiceTemplateRenderer invoice={invoice} printableRef={printableRef} />
             </div>
           </div>

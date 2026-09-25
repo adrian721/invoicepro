@@ -164,7 +164,7 @@ export const InvoiceDetailModal: React.FC<InvoiceDetailModalProps> = ({
         </div>
 
         {/* Invoice Paper Document Display */}
-        <div className="p-4 sm:p-8 overflow-y-auto flex-1 flex justify-center bg-slate-200/50">
+        <div className="p-3 sm:p-8 overflow-y-auto overflow-x-auto flex-1 flex justify-start md:justify-center bg-slate-200/50">
           <InvoiceTemplateRenderer invoice={invoice} printableRef={printableRef} />
         </div>
       </div>

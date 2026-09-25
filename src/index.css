@@ -30,10 +30,14 @@
   background: #94a3b8;
 }
 
-/* Ensure invoice document uses standard sRGB colors for pristine PDF generation */
+/* Ensure invoice document uses standard sRGB colors and strict A4 width for pristine PDF generation across all devices including smartphones */
 #invoice-document-capture {
+  width: 794px !important;
+  min-width: 794px !important;
+  max-width: 794px !important;
   background-color: #ffffff !important;
   color: #0f172a !important;
+  box-sizing: border-box !important;
 }
 
 /* Print optimization styles for PDF generation and standard print */

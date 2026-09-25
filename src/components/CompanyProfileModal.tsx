@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CompanyProfile } from '../types/invoice';
-import { X, Building2, CreditCard, Save, Upload, Check, Banknote, Shield } from 'lucide-react';
+import { X, Building2, CreditCard, Save, Upload, Check, Banknote, Shield, Cloud, RefreshCw } from 'lucide-react';
 
 interface CompanyProfileModalProps {
   isOpen: boolean;
@@ -18,6 +18,13 @@ export const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({
   const [formData, setFormData] = useState<CompanyProfile>(profile);
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Sync formData whenever profile or modal open state updates
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(profile);
+    }
+  }, [profile, isOpen]);
 
   if (!isOpen) return null;
 
@@ -89,6 +96,17 @@ export const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+          {/* Cloud Sync Status Banner */}
+          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-900">
+            <Cloud className="w-4 h-4 text-blue-600 shrink-0" />
+            <div className="flex-1">
+              <span className="font-bold text-[11px] block">Sinkronisasi Cloud Firestore Aktif</span>
+              <span className="text-[10px] text-blue-700 block">
+                Profil bisnis ini tersimpan di cloud dan otomatis termuat saat membuka aplikasi di HP (smartphone) maupun komputer.
+              </span>
+            </div>
+          </div>
+
           {/* Identity Section */}
           <div className="space-y-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
@@ -300,17 +318,17 @@ export const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({
             <button
               type="submit"
               disabled={isSaving}
-              className="inline-flex items-center gap-1.5 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/30 transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/30 transition-all active:scale-95 cursor-pointer disabled:opacity-60"
             >
               {savedSuccess ? (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  <span>Tersimpan!</span>
+                  <span>Tersimpan di Cloud & Lokal!</span>
                 </>
               ) : (
                 <>
-                  <Save className={`w-3.5 h-3.5 ${isSaving ? 'animate-spin' : ''}`} />
-                  <span>{isSaving ? 'Menyimpan...' : 'Simpan Profil'}</span>
+                  <Cloud className={`w-3.5 h-3.5 ${isSaving ? 'animate-pulse' : ''}`} />
+                  <span>{isSaving ? 'Menyimpan ke Cloud...' : 'Simpan ke Cloud'}</span>
                 </>
               )}
             </button>

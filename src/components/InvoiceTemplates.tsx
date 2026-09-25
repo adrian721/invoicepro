@@ -165,12 +165,12 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
     <div 
       id="invoice-document-capture" 
       ref={printableRef}
-      className="invoice-printable w-full bg-white text-slate-800 shadow-xl rounded-xl mx-auto overflow-hidden text-sm print:shadow-none print:rounded-none max-w-[840px] border border-slate-200"
-      style={{ minHeight: '1080px', boxSizing: 'border-box' }}
+      className="invoice-printable bg-white text-slate-800 shadow-xl rounded-xl mx-auto overflow-hidden text-sm print:shadow-none print:rounded-none w-[794px] min-w-[794px] max-w-[794px] border border-slate-200 shrink-0"
+      style={{ minHeight: '1120px', width: '794px', minWidth: '794px', maxWidth: '794px', boxSizing: 'border-box' }}
     >
       {/* Top Banner / Header */}
-      <div className={`p-8 md:p-10 ${template === 'corporate' || template === 'dark' ? theme.primary : 'border-b border-slate-100'}`}>
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
+      <div className={`p-8 ${template === 'corporate' || template === 'dark' ? theme.primary : 'border-b border-slate-100'}`}>
+        <div className="flex flex-row justify-between items-start gap-6">
           {/* Company Brand */}
           <div className="flex items-start gap-4">
             {company.logoUrl ? (
@@ -200,7 +200,7 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
           </div>
 
           {/* Invoice Meta */}
-          <div className="sm:text-right flex flex-col sm:items-end">
+          <div className="text-right flex flex-col items-end shrink-0">
             <span className={`text-xs uppercase tracking-widest font-semibold ${template === 'corporate' || template === 'dark' ? 'text-slate-300' : 'text-indigo-600'}`}>
               INVOICE RESMI
             </span>
@@ -214,9 +214,9 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
         </div>
       </div>
 
-      <div className="p-8 md:p-10 space-y-8">
+      <div className="p-8 space-y-8">
         {/* Bill To & Dates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/80 p-5 rounded-xl border border-slate-100">
+        <div className="grid grid-cols-2 gap-6 bg-slate-50/80 p-5 rounded-xl border border-slate-100">
           {/* Bill To */}
           <div className="space-y-1">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -238,7 +238,7 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
           </div>
 
           {/* Invoice Dates & Terms */}
-          <div className="space-y-2 md:text-right flex flex-col md:items-end justify-center">
+          <div className="space-y-2 text-right flex flex-col items-end justify-center">
             <div className="text-xs">
               <span className="text-slate-500 mr-2">Tanggal Terbit:</span>
               <span className="font-semibold text-slate-800">{formatDate(issueDate)}</span>
@@ -308,10 +308,10 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
         </div>
 
         {/* Summary & Payment Instruction Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-12 gap-8 pt-4 border-t border-slate-100">
           
           {/* Left Column: ALL Payment Methods Including Cash */}
-          <div className="md:col-span-7 space-y-4">
+          <div className="col-span-7 space-y-4">
             
             <div className="border border-slate-200/90 rounded-2xl p-4 bg-slate-50/60 space-y-3.5">
               <div className="flex items-center justify-between">
@@ -486,7 +486,7 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
           </div>
 
           {/* Right Column: Financial Calculations & Signature */}
-          <div className="md:col-span-5 space-y-3">
+          <div className="col-span-5 space-y-3">
             <div className="space-y-2 text-xs">
               <div className="flex justify-between py-1 text-slate-600">
                 <span>Subtotal</span>
@@ -537,7 +537,7 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
 
             {/* Signature Area */}
             {signature && (signature.signerName || signature.signatureImage) && (
-              <div className="pt-6 mt-4 text-center sm:text-right flex flex-col items-center sm:items-end">
+              <div className="pt-6 mt-4 text-right flex flex-col items-end">
                 <span className="text-[11px] text-slate-400 mb-1">Hormat Kami,</span>
                 {signature.signatureImage ? (
                   <img 
@@ -562,7 +562,7 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
         </div>
 
         {/* Footer Guarantee */}
-        <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-400 gap-2">
+        <div className="pt-6 border-t border-slate-100 flex flex-row justify-between items-center text-[10px] text-slate-400 gap-2">
           <div className="flex items-center gap-1.5">
             <Receipt className="w-3.5 h-3.5 text-slate-400" />
             <span>Dokumen invoice ini sah. Pembayaran tunai wajib disertai kuitansi tanda terima resmi.</span>

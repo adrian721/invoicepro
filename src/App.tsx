@@ -16,7 +16,8 @@ import {
   deleteInvoiceFromCloud,
   syncCompanyProfile,
   syncClientToCloud,
-  subscribeToCloudInvoices
+  subscribeToCloudInvoices,
+  subscribeToCompanyProfile
 } from './lib/firebase';
 import { calculateInvoiceNotifications } from './lib/notifications';
 import { Navbar } from './components/Navbar';
@@ -82,10 +83,10 @@ export default function App() {
     };
   }, []);
 
-  // Subscribe to Cloud Firestore
+  // Subscribe to Cloud Firestore (Invoices & Company Profile)
   useEffect(() => {
     setSyncStatus('syncing');
-    const unsubscribe = subscribeToCloudInvoices(
+    const unsubscribeInvoices = subscribeToCloudInvoices(
       (cloudInvoices) => {
         if (cloudInvoices && cloudInvoices.length > 0) {
           // Merge cloud invoices with local ones, preferring the latest updated
@@ -106,7 +107,23 @@ export default function App() {
       }
     );
 
-    return () => unsubscribe();
+    // Also sync business profile across devices from Cloud Firestore
+    const unsubscribeProfile = subscribeToCompanyProfile(
+      (cloudProfile) => {
+        if (cloudProfile && cloudProfile.name) {
+          setCompanyProfile(cloudProfile);
+          saveLocalProfile(cloudProfile);
+        }
+      },
+      (error) => {
+        console.warn('Profile sync error or offline mode:', error);
+      }
+    );
+
+    return () => {
+      unsubscribeInvoices();
+      unsubscribeProfile();
+    };
   }, []);
 
   // Helper: generate new default invoice

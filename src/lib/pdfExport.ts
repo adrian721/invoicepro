@@ -16,8 +16,10 @@ export async function generateInvoicePdf(elementId: string, filename: string): P
   try {
     // Generate crisp PNG image data url directly using native browser rendering
     // This completely bypasses any CSS color parser issues with oklch in Tailwind v4
-    const elementWidth = element.scrollWidth || element.offsetWidth || 800;
-    const elementHeight = element.scrollHeight || element.offsetHeight || 1120;
+    // Standard A4 pixel width at 96 DPI baseline (210mm = 794px)
+    const A4_STANDARD_WIDTH = 794;
+    const elementWidth = A4_STANDARD_WIDTH;
+    const elementHeight = Math.max(element.scrollHeight || element.offsetHeight || 1123, 1123);
 
     const imgData = await toPng(element, {
       quality: 0.98,
@@ -27,6 +29,12 @@ export async function generateInvoicePdf(elementId: string, filename: string): P
       skipFonts: true, // Prevents cross-origin CSSStyleSheet.cssRules security errors from remote font stylesheets
       width: elementWidth,
       height: elementHeight,
+      style: {
+        width: `${A4_STANDARD_WIDTH}px`,
+        minWidth: `${A4_STANDARD_WIDTH}px`,
+        maxWidth: `${A4_STANDARD_WIDTH}px`,
+        transform: 'none',
+      },
       filter: (node) => {
         if (node instanceof HTMLElement && node.classList.contains('no-pdf')) {
           return false;
@@ -40,6 +48,7 @@ export async function generateInvoicePdf(elementId: string, filename: string): P
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
+      compress: true,
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -53,9 +62,22 @@ export async function generateInvoicePdf(elementId: string, filename: string): P
       img.onerror = resolve;
     });
 
-    const imgWidth = pdfWidth;
+    const imgWidth = pdfWidth; // 210mm
     const imgHeight = img.width > 0 ? (img.height * pdfWidth) / img.width : pdfHeight;
 
+    // Single-page smart fit: If invoice height is within 9% of standard A4 height,
+    // fit it cleanly on exactly 1 single A4 sheet without an accidental trailing page
+    if (imgHeight <= pdfHeight * 1.09) {
+      const scale = imgHeight > pdfHeight ? (pdfHeight / imgHeight) : 1;
+      const finalWidth = imgWidth * scale;
+      const finalHeight = imgHeight * scale;
+      const xOffset = (pdfWidth - finalWidth) / 2;
+      pdf.addImage(imgData, 'PNG', xOffset, 0, finalWidth, finalHeight, undefined, 'FAST');
+      pdf.save(`${filename}.pdf`);
+      return true;
+    }
+
+    // For multi-page invoices (many line items exceeding 1 page)
     let heightLeft = imgHeight;
     let position = 0;
 
@@ -64,7 +86,7 @@ export async function generateInvoicePdf(elementId: string, filename: string): P
     heightLeft -= pdfHeight;
 
     // If multi-page invoice content exceeds one A4 page
-    while (heightLeft > 5) {
+    while (heightLeft > 10) {
       position = heightLeft - imgHeight;
       pdf.addPage();
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
