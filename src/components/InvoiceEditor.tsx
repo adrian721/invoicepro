@@ -837,24 +837,24 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                       <div>
-                        <label className="block text-[10px] text-slate-500">Jumlah (Qty)</label>
+                        <label className="block text-[10px] text-slate-500 font-medium">Jumlah (Qty)</label>
                         <input
                           type="number"
                           min="1"
                           value={item.quantity}
                           onChange={(e) => handleItemChange(item.id, 'quantity', parseFloat(e.target.value) || 0)}
-                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-800 font-mono text-center focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800 font-mono text-center focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[10px] text-slate-500">Satuan</label>
+                        <label className="block text-[10px] text-slate-500 font-medium">Satuan</label>
                         <select
                           value={item.unit}
                           onChange={(e) => handleItemChange(item.id, 'unit', e.target.value)}
-                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 focus:outline-hidden"
+                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 focus:outline-hidden"
                         >
                           <option value="item">item</option>
                           <option value="pcs">pcs</option>
@@ -869,24 +869,12 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
                       </div>
 
                       <div>
-                        <label className="block text-[10px] text-slate-500">Harga Satuan</label>
+                        <label className="block text-[10px] text-slate-500 font-medium">Harga Satuan ({invoice.currencySymbol})</label>
                         <input
                           type="number"
                           value={item.unitPrice}
                           onChange={(e) => handleItemChange(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
-                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-800 font-mono text-right focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[10px] text-slate-500">Diskon (%)</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={item.discount}
-                          onChange={(e) => handleItemChange(item.id, 'discount', parseFloat(e.target.value) || 0)}
-                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-800 font-mono text-center focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-800 font-mono text-right focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
                         />
                       </div>
                     </div>

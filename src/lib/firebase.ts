@@ -201,20 +201,20 @@ export const sampleInvoices: Invoice[] = [
         quantity: 1,
         unit: 'paket',
         unitPrice: 3500000,
-        discount: 10,
+        discount: 0,
         taxable: true,
-        amount: 3150000
+        amount: 3500000
       }
     ],
     taxRate: 11,
-    taxAmount: 2381500,
+    taxAmount: 2420000,
     discountType: 'fixed',
     discountValue: 0,
     discountAmount: 0,
     shippingFee: 0,
-    subtotal: 21650000,
-    totalAmount: 24031500,
-    paidAmount: 24031500,
+    subtotal: 22000000,
+    totalAmount: 24420000,
+    paidAmount: 24420000,
     remainingAmount: 0,
     paymentDetails: {
       ...defaultPaymentDetails,
@@ -275,9 +275,9 @@ export const sampleInvoices: Invoice[] = [
         quantity: 40,
         unit: 'jam',
         unitPrice: 350000,
-        discount: 5,
+        discount: 0,
         taxable: true,
-        amount: 13300000
+        amount: 14000000
       },
       {
         id: 'item_2_2',
@@ -292,15 +292,15 @@ export const sampleInvoices: Invoice[] = [
       }
     ],
     taxRate: 11,
-    taxAmount: 1793000,
+    taxAmount: 1870000,
     discountType: 'fixed',
     discountValue: 0,
     discountAmount: 0,
     shippingFee: 0,
-    subtotal: 1630000,
-    totalAmount: 18093000,
+    subtotal: 17000000,
+    totalAmount: 18870000,
     paidAmount: 5000000,
-    remainingAmount: 13093000,
+    remainingAmount: 13870000,
     paymentDetails: {
       ...defaultPaymentDetails,
       paymentTerms: 'Termin 2 (Sisa Pelunasan)',
