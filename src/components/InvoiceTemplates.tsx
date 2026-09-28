@@ -260,45 +260,55 @@ export const InvoiceTemplateRenderer: React.FC<InvoiceTemplateProps> = ({ invoic
 
         {/* Items Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse table-fixed">
             <thead>
               <tr className={`text-xs uppercase tracking-wider font-semibold ${theme.tableHeader}`}>
-                <th className="py-3 px-4 rounded-l-lg">Deskripsi / Layanan</th>
-                <th className="py-3 px-3 text-center">Jumlah</th>
-                <th className="py-3 px-3 text-right">Harga Satuan</th>
-                <th className="py-3 px-3 text-right">Diskon</th>
-                <th className="py-3 px-4 text-right rounded-r-lg">Subtotal</th>
+                <th className="py-3 px-3.5 rounded-l-lg w-[28%]">Deskripsi / Layanan</th>
+                <th className="py-3 px-3 w-[30%]">Catatan Sub Pengerjaan</th>
+                <th className="py-3 px-2 text-center w-[10%]">Jumlah</th>
+                <th className="py-3 px-2 text-right w-[14%]">Harga Satuan</th>
+                <th className="py-3 px-1.5 text-right w-[6%]">Diskon</th>
+                <th className="py-3 px-3.5 text-right rounded-r-lg w-[12%]">Subtotal</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs">
               {items && items.length > 0 ? (
                 items.map((item, idx) => (
-                  <tr key={item.id || idx} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="py-3.5 px-4 font-medium text-slate-800">
-                      <div>{item.description}</div>
+                  <tr key={item.id || idx} className="hover:bg-slate-50/50 transition-colors align-top">
+                    <td className="py-3.5 px-3.5 font-medium text-slate-800">
+                      <div className="font-bold text-slate-900 leading-snug">{item.description}</div>
                       {item.taxable && (
                         <span className="inline-block mt-0.5 text-[10px] text-slate-400 font-normal">
                           *Kena Pajak
                         </span>
                       )}
                     </td>
-                    <td className="py-3.5 px-3 text-center text-slate-600">
+                    <td className="py-3.5 px-3 text-slate-600 text-[11px] leading-relaxed">
+                      {item.notes ? (
+                        <div className="whitespace-pre-line text-slate-700 bg-slate-50/90 px-2.5 py-1.5 rounded-lg border border-slate-200/70 font-normal">
+                          {item.notes}
+                        </div>
+                      ) : (
+                        <span className="text-slate-300 italic text-[10px]">-</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-2 text-center text-slate-600 font-mono">
                       {item.quantity} {item.unit || 'item'}
                     </td>
-                    <td className="py-3.5 px-3 text-right text-slate-700 font-mono">
+                    <td className="py-3.5 px-2 text-right text-slate-700 font-mono">
                       {formatCurrency(item.unitPrice, currency, currencySymbol)}
                     </td>
-                    <td className="py-3.5 px-3 text-right text-slate-500">
+                    <td className="py-3.5 px-1.5 text-right text-slate-500 font-mono">
                       {item.discount > 0 ? `${item.discount}%` : '-'}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-bold text-slate-900 font-mono">
+                    <td className="py-3.5 px-3.5 text-right font-bold text-slate-900 font-mono">
                       {formatCurrency(item.amount, currency, currencySymbol)}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-slate-400">
+                  <td colSpan={6} className="py-6 text-center text-slate-400">
                     Belum ada baris item tagihan.
                   </td>
                 </tr>

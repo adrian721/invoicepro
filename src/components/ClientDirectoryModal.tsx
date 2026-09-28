@@ -12,7 +12,8 @@ import {
   Plus, 
   Edit2, 
   Trash2,
-  Check
+  Check,
+  Cloud
 } from 'lucide-react';
 
 interface ClientDirectoryModalProps {
@@ -22,6 +23,7 @@ interface ClientDirectoryModalProps {
   invoices: Invoice[];
   onSaveClient: (client: Client) => Promise<void>;
   onCreateInvoiceForClient: (client: Client) => void;
+  onDeleteClient?: (clientId: string) => Promise<void>;
 }
 
 export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
@@ -31,9 +33,11 @@ export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
   invoices,
   onSaveClient,
   onCreateInvoiceForClient,
+  onDeleteClient,
 }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -63,6 +67,13 @@ export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
     setShowAddForm(true);
   };
 
+  const handleDelete = async (client: Client) => {
+    if (!onDeleteClient) return;
+    if (confirm(`Hapus klien "${client.name}" dari direktori dan Cloud Firestore?`)) {
+      await onDeleteClient(client.id);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) {
@@ -70,18 +81,23 @@ export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
       return;
     }
 
-    const clientToSave: Client = {
-      id: editingClient ? editingClient.id : `client_${Date.now()}`,
-      name: formData.name.trim(),
-      company: formData.company.trim(),
-      email: formData.email.trim(),
-      phone: formData.phone.trim(),
-      address: formData.address.trim(),
-      createdAt: editingClient ? editingClient.createdAt : new Date().toISOString()
-    };
+    setIsSaving(true);
+    try {
+      const clientToSave: Client = {
+        id: editingClient ? editingClient.id : `client_${Date.now()}`,
+        name: formData.name.trim(),
+        company: formData.company.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        address: formData.address.trim(),
+        createdAt: editingClient ? editingClient.createdAt : new Date().toISOString()
+      };
 
-    await onSaveClient(clientToSave);
-    setShowAddForm(false);
+      await onSaveClient(clientToSave);
+      setShowAddForm(false);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Helper to compute client's total invoice stats
@@ -124,6 +140,17 @@ export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
 
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
+          {/* Cloud Sync Banner */}
+          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-900">
+            <Cloud className="w-4 h-4 text-blue-600 shrink-0" />
+            <div className="flex-1">
+              <span className="font-bold text-[11px] block">Sinkronisasi Cloud Firestore Aktif</span>
+              <span className="text-[10px] text-blue-700 block">
+                Semua kontak klien tersimpan aman di database cloud dan otomatis terhubung ke smartphone & komputer Anda.
+              </span>
+            </div>
+          </div>
+
           {/* Top Actions */}
           {!showAddForm && (
             <div className="flex justify-between items-center">
@@ -225,9 +252,17 @@ export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer disabled:opacity-60"
                 >
-                  {editingClient ? 'Simpan Perubahan' : 'Simpan Klien'}
+                  <Cloud className={`w-3.5 h-3.5 ${isSaving ? 'animate-pulse' : ''}`} />
+                  <span>
+                    {isSaving
+                      ? 'Menyimpan ke Cloud...'
+                      : editingClient
+                      ? 'Simpan Perubahan ke Cloud'
+                      : 'Simpan Klien ke Cloud'}
+                  </span>
                 </button>
               </div>
             </form>
@@ -256,12 +291,24 @@ export const ClientDirectoryModal: React.FC<ClientDirectoryModalProps> = ({
                       )}
                     </div>
                     
-                    <button
-                      onClick={() => handleEdit(client)}
-                      className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleEdit(client)}
+                        title="Edit Data Klien"
+                        className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      {onDeleteClient && (
+                        <button
+                          onClick={() => handleDelete(client)}
+                          title="Hapus Klien dari Cloud & Lokal"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-1 text-xs text-slate-600">

@@ -143,8 +143,14 @@ export function normalizeInvoice(inv: Partial<Invoice>): Invoice {
     notes: existingDetails.notes || 'Terima kasih atas kerja samanya.'
   };
 
+  const normalizedItems = (inv.items || []).map((item) => ({
+    ...item,
+    notes: item.notes || ''
+  }));
+
   return {
     ...inv,
+    items: normalizedItems,
     paymentDetails
   } as Invoice;
 }
@@ -180,6 +186,7 @@ export const sampleInvoices: Invoice[] = [
       {
         id: 'item_1_1',
         description: 'Pengembangan Aplikasi Web E-Commerce Responsif (Fase 1)',
+        notes: 'Sub pengerjaan: Desain UI/UX Figma 5 modul utama, integrasi payment gateway Midtrans & QRIS, API katalog produk responsif.',
         quantity: 1,
         unit: 'proyek',
         unitPrice: 18500000,
@@ -190,6 +197,7 @@ export const sampleInvoices: Invoice[] = [
       {
         id: 'item_1_2',
         description: 'Setup Cloud Hosting & Domain SSL Enterprise (1 Tahun)',
+        notes: 'Sub pengerjaan: Konfigurasi server Linux VPS, registrasi DNS domain .co.id, SSL TLS Let\'s Encrypt auto-renewal, backup otomatis harian.',
         quantity: 1,
         unit: 'paket',
         unitPrice: 3500000,
@@ -263,6 +271,7 @@ export const sampleInvoices: Invoice[] = [
       {
         id: 'item_2_1',
         description: 'Jasa UI/UX Redesign Portal Pelanggan & Desain Sistem',
+        notes: 'Sub pengerjaan: Wireframing Figma, user flow portal pelanggan, pembuatan modul desain sistem komponen & icon pack.',
         quantity: 40,
         unit: 'jam',
         unitPrice: 350000,
@@ -273,6 +282,7 @@ export const sampleInvoices: Invoice[] = [
       {
         id: 'item_2_2',
         description: 'Prototyping Interaktif & Usability Testing Sesi',
+        notes: 'Sub pengerjaan: Sesi live testing dengan 5 responden pengguna, analisis usability SUS score, dan dokumentasi rekomendasi UX.',
         quantity: 2,
         unit: 'sesi',
         unitPrice: 1500000,
@@ -346,6 +356,7 @@ export const sampleInvoices: Invoice[] = [
       {
         id: 'item_3_1',
         description: 'Pemeliharaan Server & Optimasi Basis Data Bulanan',
+        notes: 'Sub pengerjaan: Backup rutin mingguan, patching security kernel Ubuntu Server, optimasi index query PostgreSQL.',
         quantity: 1,
         unit: 'bulan',
         unitPrice: 8500000,

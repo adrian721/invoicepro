@@ -172,6 +172,7 @@ export default function App() {
         {
           id: `item_${Date.now()}_1`,
           description: 'Jasa Konsultasi / Layanan Profesional',
+          notes: 'Sub pengerjaan: Analisis kebutuhan, perancangan sistem, implementasi, dan dokumentasi.',
           quantity: 1,
           unit: 'proyek',
           unitPrice: 5000000,

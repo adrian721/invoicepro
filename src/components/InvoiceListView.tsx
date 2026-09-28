@@ -73,7 +73,10 @@ export const InvoiceListView: React.FC<InvoiceListViewProps> = ({
           const q = searchTerm.toLowerCase();
           const matchNumber = inv.invoiceNumber.toLowerCase().includes(q);
           const matchClient = inv.client.name.toLowerCase().includes(q) || (inv.client.company && inv.client.company.toLowerCase().includes(q));
-          const matchItems = inv.items.some((it) => it.description.toLowerCase().includes(q));
+          const matchItems = inv.items.some((it) => 
+            it.description.toLowerCase().includes(q) || 
+            (it.notes && it.notes.toLowerCase().includes(q))
+          );
           return matchNumber || matchClient || matchItems;
         }
 

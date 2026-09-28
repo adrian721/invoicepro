@@ -13,6 +13,7 @@
         "clientEmail": { "type": "string" },
         "totalAmount": { "type": "number" },
         "currency": { "type": "string" },
+        "items": { "type": "array", "description": "Line items with sub-work notes" },
         "updatedAt": { "type": "string" }
       },
       "required": ["invoiceNumber", "status", "issueDate", "dueDate", "totalAmount"]

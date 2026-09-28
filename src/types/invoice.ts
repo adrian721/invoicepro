@@ -7,6 +7,7 @@ export type PaymentMethodType = 'cash' | 'bank_transfer' | 'qris' | 'online_link
 export interface InvoiceItem {
   id: string;
   description: string;
+  notes?: string; // Catatan sub pengerjaan / rincian detail sub-pekerjaan
   quantity: number;
   unit: string;
   unitPrice: number;

@@ -33,7 +33,8 @@ import {
   QrCode,
   Globe,
   FileCheck2,
-  Receipt
+  Receipt,
+  ListTree
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -142,6 +143,7 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
     const newItem: InvoiceItem = {
       id: `item_${Date.now()}`,
       description: '',
+      notes: '',
       quantity: 1,
       unit: 'item',
       unitPrice: 0,
@@ -803,14 +805,36 @@ export const InvoiceEditor: React.FC<InvoiceEditorProps> = ({
                       </div>
                     </div>
 
-                    <div>
-                      <input
-                        type="text"
-                        value={item.description}
-                        onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
-                        placeholder="Deskripsi layanan atau nama produk..."
-                        className="w-full text-xs bg-white border border-slate-200 rounded-lg px-3 py-1.5 font-medium text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
-                      />
+                    <div className="space-y-2">
+                      <div>
+                        <label className="block text-[10px] font-semibold text-slate-700 mb-1">
+                          Deskripsi Layanan / Produk Utama *
+                        </label>
+                        <input
+                          type="text"
+                          value={item.description}
+                          onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
+                          placeholder="e.g. Pembuatan Website Perusahaan & Sistem Informasi..."
+                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-3 py-1.5 font-medium text-slate-800 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-[10px] font-semibold text-slate-700 flex items-center gap-1.5">
+                            <ListTree className="w-3.5 h-3.5 text-indigo-600" />
+                            <span>Catatan Sub Pengerjaan / Rincian Pekerjaan (Opsional)</span>
+                          </label>
+                          <span className="text-[9px] text-slate-400">Tampil di kolom tabel invoice</span>
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={item.notes || ''}
+                          onChange={(e) => handleItemChange(item.id, 'notes', e.target.value)}
+                          placeholder="e.g. Sub pengerjaan: Desain UI/UX Figma 5 modul, Integrasi API Payment, UAT & Revisi..."
+                          className="w-full text-xs bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-indigo-500 leading-relaxed placeholder:text-slate-400"
+                        />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
